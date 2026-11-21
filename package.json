@@ -1,0 +1,20 @@
+{
+  "name": "sentinel-platform-v2",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Independent Sentinel multi-tenant monitoring platform starter",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix frontend\" \"npm run dev --prefix backend\"",
+    "dev:tilda": "concurrently \"npm run dev --prefix ecommerce/client\" \"npm run dev --prefix ecommerce/server\"",
+    "start": "npm start --prefix backend",
+    "build": "npm run build:all",
+    "build:sentinel": "npm run build --prefix frontend",
+    "build:tilda": "npm run build --prefix ecommerce/client",
+    "build:all": "npm run build:sentinel && npm run build:tilda",
+    "test": "npm test --prefix backend && python3 -m unittest discover -s services/ai-engine/tests && npm test --prefix ecommerce/server && npm test --prefix ecommerce/client",
+    "install:all": "npm install && npm install --prefix frontend && npm install --prefix backend && npm install --prefix ecommerce/client && npm install --prefix ecommerce/server && npm install --prefix recovery-controller"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

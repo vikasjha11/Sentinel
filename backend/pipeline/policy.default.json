@@ -1,0 +1,25 @@
+{
+  "name": "default",
+  "version": 1,
+  "defaults": {
+    "approvalMode": "manual",
+    "criticality": "standard",
+    "allowedActions": ["restart", "scale", "rollback"],
+    "maxRestartsPerHour": 3,
+    "cooldownSeconds": 60,
+    "maxScaleReplicas": 5,
+    "autoHealWindow": null
+  },
+  "limits": { "maxConcurrentRecoveries": 2 },
+  "environments": {
+    "production": { "criticalRequiresApproval": true },
+    "development": { "criticalRequiresApproval": false }
+  },
+  "services": {
+    "gateway": { "criticality": "critical", "approvalMode": "manual", "allowedActions": ["restart"] },
+    "auth": { "criticality": "critical", "approvalMode": "manual", "allowedActions": ["restart"] },
+    "orders": { "criticality": "critical", "approvalMode": "manual", "allowedActions": ["restart"] },
+    "products": { "criticality": "standard", "approvalMode": "auto", "allowedActions": ["restart"] },
+    "media": { "criticality": "standard", "approvalMode": "auto", "allowedActions": ["restart"] }
+  }
+}

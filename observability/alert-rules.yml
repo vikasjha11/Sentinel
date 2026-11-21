@@ -1,0 +1,42 @@
+# Prometheus alert rules. Every alert carries a `service` label that matches a Sentinel service key (gateway, auth,
+# products, orders, media). Alertmanager forwards firing alerts to POST /api/alerts/webhook on the Sentinel API,
+# where they join the health-check detector as a second detection signal.
+groups:
+  - name: sentinel-service-health
+    rules:
+      - alert: ServiceDown
+        expr: sentinel_service_up == 0
+        for: 15s
+        labels: { severity: critical }
+        annotations:
+          summary: "{{ $labels.service }} is down (health check failing)."
+
+      - alert: ServiceRestartingFrequently
+        expr: increase(sentinel_service_restarts_total[10m]) >= 3
+        labels: { severity: high }
+        annotations:
+          summary: "{{ $labels.service }} restarted {{ $value }} times in 10 minutes."
+
+  - name: tilda-service-traffic
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          label_replace(
+            sum by (tilda_service) (rate(tilda_http_errors_total[1m]))
+              / clamp_min(sum by (tilda_service) (rate(tilda_http_requests_total[1m])), 0.01),
+            "service", "$1", "tilda_service", "(.+)") > 0.05
+        for: 30s
+        labels: { severity: high }
+        annotations:
+          summary: "{{ $labels.service }}: more than 5% of requests return 5xx."
+
+      - alert: HighLatency
+        expr: |
+          label_replace(
+            sum by (tilda_service) (rate(tilda_http_request_duration_seconds_sum[1m]))
+              / clamp_min(sum by (tilda_service) (rate(tilda_http_request_duration_seconds_count[1m])), 0.01),
+            "service", "$1", "tilda_service", "(.+)") > 1
+        for: 1m
+        labels: { severity: medium }
+        annotations:
+          summary: "{{ $labels.service }}: average response time above 1 second."

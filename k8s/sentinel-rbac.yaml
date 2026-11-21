@@ -1,0 +1,45 @@
+# Least-privilege access for the Sentinel Kubernetes executor.
+# Apply the Role and RoleBinding in the namespace that holds the workloads Sentinel may heal (WORKLOAD_NAMESPACE).
+# The ServiceAccount lives where Sentinel runs. Replace the namespace placeholders before applying.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sentinel-executor
+  namespace: sentinel-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sentinel-executor
+  namespace: WORKLOAD_NAMESPACE
+rules:
+  # restart (patch pod template annotation), rollback (patch template), read state
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "patch"]
+  # scale
+  - apiGroups: ["apps"]
+    resources: ["deployments/scale"]
+    verbs: ["get", "patch"]
+  # find the previous revision for rollback
+  - apiGroups: ["apps"]
+    resources: ["replicasets"]
+    verbs: ["get", "list"]
+  # read-only context for AI analysis
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sentinel-executor
+  namespace: WORKLOAD_NAMESPACE
+subjects:
+  - kind: ServiceAccount
+    name: sentinel-executor
+    namespace: sentinel-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sentinel-executor
