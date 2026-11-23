@@ -1,17 +1,5 @@
 # Sentinel + Tilda Goods — VS Code setup
 
-## Requirements
-- Windows 10/11
-- Docker Desktop (Linux containers / WSL 2 engine)
-- Visual Studio Code
-- Git Bash or PowerShell terminal
-- Node.js is recommended for local scripts; the environment setup script itself uses Windows PowerShell/.NET.
-
-## 1. Open the project
-1. Extract this ZIP.
-2. In VS Code choose **File → Open Folder**.
-3. Select the `sentinel-platform-upgraded` folder (the folder containing `docker-compose.yml`).
-4. Open **Terminal → New Terminal**. Confirm the terminal is in that folder.
 
 ## 2. Generate local environment secrets
 In the VS Code terminal, select **PowerShell** and run:
@@ -68,17 +56,6 @@ Tilda admin email defaults to `admin@tilda.local`. Its password is generated int
 docker compose down
 ```
 Do **not** use `docker compose down -v` unless you intentionally want to delete persistent data volumes (including MongoDB data).
-
-## Troubleshooting
-- If Compose says a required variable is missing, rerun the setup script and then `docker compose config --quiet`.
-- If containers restart, inspect logs: `docker compose logs --tail=150 <service>`.
-- If a container name is already in use, run `docker compose down --remove-orphans` from this same project folder, then `docker compose up -d`. Do not remove volumes.
-- If ports 4000, 5173, 5174, 5000, 3001, or 9090 are occupied, stop the other application using that port or change the host-side port mapping in `docker-compose.yml`.
-
-## Important
-- `.env` contains private secrets and is not included in the ZIP.
-- `.env.example` is a template, not a production credential file.
-- The Docker setup has not been live-tested against your local Docker Desktop installation; verify with the commands above.
 
 ## Interfaces and navigation
 The project has three separate interfaces. Each has its own navigation and they do not share menus.

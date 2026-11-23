@@ -1,4 +1,3 @@
-# Sentinel Platform + Tilda Goods e-commerce microservices — one unified stack.
 #   docker compose up --build -d
 # Sentinel:  http://localhost:5173   Storefront: http://localhost:5174   Gateway: http://localhost:5000/api/health
 # Grafana:   http://localhost:3001   Prometheus: http://localhost:9090   Loki: http://localhost:3100
